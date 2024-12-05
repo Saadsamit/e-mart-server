@@ -12,17 +12,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = require("./app/config");
-const app_1 = __importDefault(require("./app"));
-function Main() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            yield app_1.default.listen(config_1.config === null || config_1.config === void 0 ? void 0 : config_1.config.port);
-            console.log('connected');
-        }
-        catch (error) {
-            console.log(error);
-        }
+const config_1 = __importDefault(require("../config"));
+const AppError_1 = __importDefault(require("../errors/AppError"));
+const isUserExist = (email) => __awaiter(void 0, void 0, void 0, function* () {
+    const isExist = yield config_1.default.user.findUnique({
+        where: { email: email, status: { notIn: ['suspend', 'delete'] } },
     });
-}
-Main();
+    if (!isExist) {
+        throw new AppError_1.default(401, 'User not Exist');
+    }
+    return isExist;
+});
+exports.default = isUserExist;

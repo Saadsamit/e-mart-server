@@ -6,6 +6,12 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 const creartUserDB = async (payload: TUser) => {
+  const isExist = await prisma.user.findUnique({
+    where: { email: payload.email },
+  });
+  if (isExist?.email) {
+    throw new AppError(403,"User Already  Exist")
+  }
   const hashedPassword = await bcrypt.hash(
     payload.password,
     Number(config.bcryptRound),

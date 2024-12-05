@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import config from '../../config';
+import { config } from '../../config';
 
 const route = Router();
 
