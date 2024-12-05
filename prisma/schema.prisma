@@ -13,12 +13,50 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model book {
-  bookId String @id @default(uuid())
-  title String @unique
-  genre String
-  publishedYear Int
-  totalCopies Int
-  availableCopies Int
+model User {
+  userId    String      @id @default(uuid())
+  name      String
+  email     String      @unique
+  picture   String
+  password  String
+  role      userRole    @default(CUSTOMER)
+  status    userStatus  @default(none)
+  shop      VendorShop?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  following VendorId[]
 }
 
+enum userRole {
+  ADMIN
+  VENDOR
+  CUSTOMER
+}
+
+enum userStatus {
+  none
+  request
+  suspend
+  delete
+}
+
+model VendorShop {
+  vendorId    String     @id @default(uuid())
+  email       String     @unique
+  name        String
+  logo        String
+  description String
+  user        User       @relation(fields: [email], references: [email])
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  followers   VendorId[]
+}
+
+model VendorId {
+  vendorId String
+  userId   String
+  user     User       @relation(fields: [userId], references: [userId])
+  Vendor   VendorShop @relation(fields: [vendorId], references: [vendorId])
+
+  @@id([vendorId, userId])
+}

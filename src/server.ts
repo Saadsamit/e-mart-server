@@ -1,10 +1,10 @@
+import { config } from './app/config';
 import app from './app';
-
-const port = 3000;
 
 async function Main() {
   try {
-    app.listen(port);
+    await app.listen(config?.port);
+    console.log('connected');
   } catch (error) {
     console.log(error);
   }
